@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "John Smith",
+    "company": "TechStart Inc.",
+    "rating": 5,
+    "comment": "NEURIX transformed our online presence. The website they built increased our leads by 40%!",
+    "date": "2023-06-15"
+  },
+  {
+    "id": 2,
+    "name": "Sarah Johnson",
+    "company": "Bloom Boutique",
+    "rating": 4,
+    "comment": "Beautiful e-commerce design and excellent customer service. Very responsive team.",
+    "date": "2023-08-22"
+  },
+  {
+    "id": 3,
+    "name": "Michael Chen",
+    "company": "Innovate Solutions",
+    "rating": 5,
+    "comment": "The most professional web development team I've worked with. Delivered on time and on budget.",
+    "date": "2023-10-05"
+  }
+]

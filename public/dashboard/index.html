@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - NEURIX Studios</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="/dashboard" class="logo">NEURIX<span>Studios</span></a>
+        <button id="toggleMenu" class="toggle-menu"><i class="fas fa-bars"></i></button>
+      </div>
+      
+      <ul class="menu">
+        <li class="menu-item">
+          <a href="/dashboard" class="menu-link active">
+            <i class="fas fa-tachometer-alt menu-icon"></i> Dashboard
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/products" class="menu-link">
+            <i class="fas fa-box menu-icon"></i> Products
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/reviews" class="menu-link">
+            <i class="fas fa-star menu-icon"></i> Reviews
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/staff" class="menu-link">
+            <i class="fas fa-users menu-icon"></i> Staff
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/analytics" class="menu-link">
+            <i class="fas fa-chart-bar menu-icon"></i> Analytics
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/chat" class="menu-link">
+            <i class="fas fa-comments menu-icon"></i> Live Chat
+          </a>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="main-content">
+      <div class="header">
+        <h1 class="page-title">Dashboard</h1>
+        
+        <div class="user-menu">
+          <span class="user-name">Admin</span>
+          <button class="logout-btn">Logout</button>
+        </div>
+      </div>
+      
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-title">Total Products</div>
+          <div id="totalProducts" class="stat-value">0</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-title">Active Users</div>
+          <div class="stat-value">127</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-title">Pending Orders</div>
+          <div id="pendingOrders" class="stat-value">0</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-title">Conversion Rate</div>
+          <div class="stat-value">4.2%</div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Recent Activities</h2>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Activity</th>
+                <th>User</th>
+                <th>Time</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="activitiesTable">
+              <!-- Activities will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div class="grid-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-top: 30px;">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Quick Stats</h2>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; padding: 20px;">
+            <div>
+              <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: var(--accent);">Top Referrers</h3>
+              <ul style="list-style: none;">
+                <li style="margin-bottom: 10px; display: flex; justify-content: space-between;">
+                  <span>Google</span>
+                  <span>45%</span>
+                </li>
+                <li style="margin-bottom: 10px; display: flex; justify-content: space-between;">
+                  <span>Direct</span>
+                  <span>25%</span>
+                </li>
+                <li style="margin-bottom: 10px; display: flex; justify-content: space-between;">
+                  <span>Social Media</span>
+                  <span>20%</span>
+                </li>
+                <li style="margin-bottom: 10px; display: flex; justify-content: space-between;">
+                  <span>Other</span>
+                  <span>10%</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: var(--accent);">Popular Products</h3>
+              <ul id="popularProducts" style="list-style: none;">
+                <!-- Popular products will be loaded here -->
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Recent Reviews</h2>
+            <a href="/dashboard/reviews" class="btn btn-sm">View All</a>
+          </div>
+          
+          <div id="recentReviews" style="padding: 20px;">
+            <!-- Recent reviews will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const totalProductsElement = document.getElementById('totalProducts');
+    const pendingOrdersElement = document.getElementById('pendingOrders');
+    const activitiesTableElement = document.getElementById('activitiesTable');
+    const popularProductsElement = document.getElementById('popularProducts');
+    const recentReviewsElement = document.getElementById('recentReviews');
+
+    // Toggle sidebar
+    document.getElementById('toggleMenu').addEventListener('click', function() {
+      document.querySelector('.sidebar').classList.toggle('active');
+    });
+
+    // Logout
+    document.querySelector('.logout-btn').addEventListener('click', function() {
+      fetch('/api/auth/logout', {
+        method: 'POST'
+      }).then(() => {
+        window.location.href = '/login.html';
+      });
+    });
+
+    // Helper function to get cookie value
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    // Load products count
+    async function loadProductsCount() {
+      try {
+        const response = await fetch('/api/products');
+        const products = await response.json();
+        
+        totalProductsElement.textContent = products.length;
+        
+        // Update popular products
+        updatePopularProducts(products);
+      } catch (error) {
+        console.error('Error loading products:', error);
+      }
+    }
+
+    // Load orders count
+    async function loadOrdersCount() {
+      try {
+        const token = getCookie('token');
+        const response = await fetch('/api/orders', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.status === 401) {
+          // Unauthorized, redirect to login
+          window.location.href = '/login.html';
+          return;
+        }
+        
+        const orders = await response.json();
+        const pendingOrders = orders.filter(order => order.status === 'pending');
+        
+        pendingOrdersElement.textContent = pendingOrders.length;
+        
+        // Update activities with recent orders
+        updateActivities(orders);
+      } catch (error) {
+        console.error('Error loading orders:', error);
+        
+        // If API fails, show mock data
+        pendingOrdersElement.textContent = '5';
+        showMockActivities();
+      }
+    }
+
+    // Load recent reviews
+    async function loadRecentReviews() {
+      try {
+        const response = await fetch('/api/reviews');
+        const reviews = await response.json();
+        
+        // Sort by date (newest first) and take up to 3
+        const recentReviews = reviews
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .slice(0, 3);
+        
+        recentReviewsElement.innerHTML = '';
+        
+        if (recentReviews.length === 0) {
+          recentReviewsElement.innerHTML = '<div style="text-align: center; padding: 20px;">No reviews yet</div>';
+          return;
+        }
+        
+        recentReviews.forEach(review => {
+          const reviewDiv = document.createElement('div');
+          reviewDiv.className = 'review-card';
+          reviewDiv.style.marginBottom = '15px';
+          reviewDiv.style.padding = '15px';
+          reviewDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+          reviewDiv.style.borderRadius = '8px';
+          
+          reviewDiv.innerHTML = `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <div>
+                <div style="font-weight: 600;">${review.name}</div>
+                <div style="font-size: 0.9rem; opacity: 0.7;">${review.company}</div>
+              </div>
+              <div style="color: var(--accent);">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
+            </div>
+            <div style="font-size: 0.9rem; font-style: italic;">
+              "${review.comment.length > 100 ? review.comment.substring(0, 100) + '...' : review.comment}"
+            </div>
+            <div style="font-size: 0.8rem; margin-top: 10px; text-align: right; opacity: 0.7;">
+              ${new Date(review.date).toLocaleDateString()}
+            </div>
+          `;
+          
+          recentReviewsElement.appendChild(reviewDiv);
+        });
+      } catch (error) {
+        console.error('Error loading reviews:', error);
+        recentReviewsElement.innerHTML = '<div style="text-align: center; padding: 20px;">Error loading reviews</div>';
+      }
+    }
+
+    // Update popular products
+    function updatePopularProducts(products) {
+      popularProductsElement.innerHTML = '';
+      
+      if (products.length === 0) {
+        popularProductsElement.innerHTML = '<li>No products available</li>';
+        return;
+      }
+      
+      // Sort by price (highest first) and take up to 3
+      const popularProducts = [...products]
+        .sort((a, b) => b.price - a.price)
+        .slice(0, 3);
+      
+      popularProducts.forEach(product => {
+        const li = document.createElement('li');
+        li.style.marginBottom = '10px';
+        li.style.display = 'flex';
+        li.style.justifyContent = 'space-between';
+        
+        li.innerHTML = `
+          <span>${product.name}</span>
+          <span>$${product.price.toLocaleString()}</span>
+        `;
+        
+        popularProductsElement.appendChild(li);
+      });
+    }
+
+    // Update activities
+    function updateActivities(orders) {
+      activitiesTableElement.innerHTML = '';
+      
+      if (orders.length === 0) {
+        showMockActivities();
+        return;
+      }
+      
+      // Sort by date (newest first) and take up to 4
+      const recentOrders = orders
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 4);
+      
+      recentOrders.forEach(order => {
+        const tr = document.createElement('tr');
+        
+        const date = new Date(order.date);
+        const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+        
+        tr.innerHTML = `
+          <td>New order placed</td>
+          <td>${order.name}</td>
+          <td>${formattedDate}</td>
+          <td>
+            <span class="badge badge-${order.status === 'pending' ? 'warning' : order.status === 'completed' ? 'success' : 'info'}">
+              ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+            </span>
+          </td>
+        `;
+        
+        activitiesTableElement.appendChild(tr);
+      });
+    }
+
+    // Show mock activities
+    function showMockActivities() {
+      activitiesTableElement.innerHTML = `
+        <tr>
+          <td>New order placed</td>
+          <td>John Smith</td>
+          <td>Today, 10:30 AM</td>
+          <td><span class="badge badge-warning">Pending</span></td>
+        </tr>
+        <tr>
+          <td>Website update request</td>
+          <td>Sarah Johnson</td>
+          <td>Today, 09:15 AM</td>
+          <td><span class="badge badge-info">In Progress</span></td>
+        </tr>
+        <tr>
+          <td>Chat support request</td>
+          <td>Michael Chen</td>
+          <td>Yesterday, 4:45 PM</td>
+          <td><span class="badge badge-success">Completed</span></td>
+        </tr>
+        <tr>
+          <td>New product added</td>
+          <td>Admin</td>
+          <td>Yesterday, 2:30 PM</td>
+          <td><span class="badge badge-success">Completed</span></td>
+        </tr>
+      `;
+    }
+
+    // Initialize
+    loadProductsCount();
+    loadOrdersCount();
+    loadRecentReviews();
+  </script>
+</body>
+</html>

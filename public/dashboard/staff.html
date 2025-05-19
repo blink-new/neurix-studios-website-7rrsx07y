@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Management - NEURIX Studios</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="/dashboard" class="logo">NEURIX<span>Studios</span></a>
+        <button id="toggleMenu" class="toggle-menu"><i class="fas fa-bars"></i></button>
+      </div>
+      
+      <ul class="menu">
+        <li class="menu-item">
+          <a href="/dashboard" class="menu-link">
+            <i class="fas fa-tachometer-alt menu-icon"></i> Dashboard
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/products" class="menu-link">
+            <i class="fas fa-box menu-icon"></i> Products
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/reviews" class="menu-link">
+            <i class="fas fa-star menu-icon"></i> Reviews
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/staff" class="menu-link active">
+            <i class="fas fa-users menu-icon"></i> Staff
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/analytics" class="menu-link">
+            <i class="fas fa-chart-bar menu-icon"></i> Analytics
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/chat" class="menu-link">
+            <i class="fas fa-comments menu-icon"></i> Live Chat
+          </a>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="main-content">
+      <div class="header">
+        <h1 class="page-title">Staff Management</h1>
+        
+        <div class="user-menu">
+          <span class="user-name">Admin</span>
+          <button class="logout-btn">Logout</button>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Team Members</h2>
+          <button id="addStaffBtn" class="btn btn-sm">
+            <i class="fas fa-plus"></i> Add Staff Member
+          </button>
+        </div>
+        
+        <div id="staffContainer" class="staff-grid">
+          <!-- Staff members will be loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Staff Form Modal -->
+  <div id="staffModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="staffFormTitle" class="modal-title">Add Staff Member</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      
+      <form id="staffForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="staffUsername">Username</label>
+            <input type="text" id="staffUsername" class="form-control" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="staffDisplayName">Display Name</label>
+            <input type="text" id="staffDisplayName" class="form-control" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="staffPassword">Password</label>
+            <input type="password" id="staffPassword" class="form-control" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="staffRole">Role</label>
+            <select id="staffRole" class="form-control" required>
+              <option value="moderator">Moderator</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <button type="submit" class="btn">Save Staff Member</button>
+          <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const staffContainer = document.getElementById('staffContainer');
+    const staffModal = document.getElementById('staffModal');
+    const staffForm = document.getElementById('staffForm');
+    const addStaffBtn = document.getElementById('addStaffBtn');
+    const closeModalBtn = document.querySelector('.close-modal');
+    const staffFormTitle = document.getElementById('staffFormTitle');
+
+    // Toggle sidebar
+    document.getElementById('toggleMenu').addEventListener('click', function() {
+      document.querySelector('.sidebar').classList.toggle('active');
+    });
+
+    // Logout
+    document.querySelector('.logout-btn').addEventListener('click', function() {
+      fetch('/api/auth/logout', {
+        method: 'POST'
+      }).then(() => {
+        window.location.href = '/login.html';
+      });
+    });
+
+    // Show modal function
+    function showModal() {
+      staffModal.classList.add('show');
+    }
+
+    // Close modal function
+    function closeModal() {
+      staffModal.classList.remove('show');
+    }
+
+    // Open modal to add new staff
+    addStaffBtn.addEventListener('click', function() {
+      staffFormTitle.textContent = 'Add Staff Member';
+      staffForm.reset();
+      showModal();
+    });
+
+    // Close modal when clicking the X
+    closeModalBtn.addEventListener('click', closeModal);
+
+    // Close modal when clicking outside the content
+    window.addEventListener('click', function(e) {
+      if (e.target === staffModal) {
+        closeModal();
+      }
+    });
+
+    // Function to get initials from display name
+    function getInitials(name) {
+      return name.split(' ')
+        .map(part => part.charAt(0))
+        .join('')
+        .toUpperCase();
+    }
+
+    // Load staff members
+    async function loadStaff() {
+      try {
+        const response = await fetch('/api/staff', {
+          headers: {
+            'Authorization': `Bearer ${getCookie('token')}`
+          }
+        });
+        
+        if (response.status === 401) {
+          // Unauthorized, redirect to login
+          window.location.href = '/login.html';
+          return;
+        }
+        
+        const staff = await response.json();
+        staffContainer.innerHTML = '';
+        
+        if (staff.length === 0) {
+          staffContainer.innerHTML = '<div class="empty-state">No staff members yet. Add your first staff member!</div>';
+          return;
+        }
+        
+        staff.forEach(member => {
+          const staffCard = document.createElement('div');
+          staffCard.className = 'staff-card';
+          
+          const roleColor = member.role === 'admin' ? 'var(--accent)' : '#ff9800';
+          
+          staffCard.innerHTML = `
+            <div class="staff-avatar" style="background-color: ${roleColor};">
+              ${getInitials(member.displayName)}
+            </div>
+            <h3 class="staff-name">${member.displayName}</h3>
+            <div class="staff-role">${member.role.charAt(0).toUpperCase() + member.role.slice(1)}</div>
+            <div class="staff-info">
+              <div>Username: ${member.username}</div>
+              <div>Added: ${new Date(member.dateAdded).toLocaleDateString()}</div>
+            </div>
+            <button class="btn btn-sm btn-delete" onclick="removeStaff(${member.id})">
+              <i class="fas fa-user-minus"></i> Remove
+            </button>
+          `;
+          
+          staffContainer.appendChild(staffCard);
+        });
+      } catch (error) {
+        console.error('Error loading staff:', error);
+      }
+    }
+
+    // Remove staff member
+    async function removeStaff(id) {
+      if (!confirm('Are you sure you want to remove this staff member?')) return;
+      
+      try {
+        const response = await fetch(`/api/staff/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${getCookie('token')}`
+          }
+        });
+        
+        if (response.ok) {
+          loadStaff();
+        }
+      } catch (error) {
+        console.error('Error removing staff:', error);
+      }
+    }
+
+    // Handle form submission
+    staffForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const staffData = {
+        username: document.getElementById('staffUsername').value,
+        displayName: document.getElementById('staffDisplayName').value,
+        password: document.getElementById('staffPassword').value,
+        role: document.getElementById('staffRole').value
+      };
+      
+      try {
+        const response = await fetch('/api/staff', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${getCookie('token')}`
+          },
+          body: JSON.stringify(staffData)
+        });
+        
+        if (response.ok) {
+          closeModal();
+          loadStaff();
+        } else {
+          const data = await response.json();
+          alert(data.message || 'Error adding staff member');
+        }
+      } catch (error) {
+        console.error('Error adding staff:', error);
+      }
+    });
+
+    // Helper function to get cookie value
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    // Initialize
+    loadStaff();
+  </script>
+</body>
+</html>

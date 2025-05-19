@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit Review - NEURIX Studios</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
+
+  <nav class="navbar">
+    <a href="/" class="logo">NEURIX<span>Studios</span></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/#services">Services</a></li>
+      <li><a href="/#products">Products</a></li>
+      <li><a href="/#reviews">Reviews</a></li>
+      <li><a href="/login.html">Login</a></li>
+    </ul>
+    <div class="menu-btn">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+  </nav>
+
+  <section class="section section-light" style="padding-top: 120px;">
+    <div class="container">
+      <h2 class="section-title">Submit Your Review</h2>
+      <p class="section-subtitle">We value your feedback! Share your experience working with NEURIX Studios.</p>
+      
+      <form id="review-form" class="order-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Your Name</label>
+            <input type="text" id="name" class="form-control" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="company">Company Name</label>
+            <input type="text" id="company" class="form-control" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="rating">Rating</label>
+          <select id="rating" class="form-control" required>
+            <option value="">Select a rating</option>
+            <option value="5">5 - Excellent</option>
+            <option value="4">4 - Very Good</option>
+            <option value="3">3 - Good</option>
+            <option value="2">2 - Fair</option>
+            <option value="1">1 - Poor</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="comment">Your Review</label>
+          <textarea id="comment" class="form-control" rows="5" required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <button type="submit" class="btn btn-block">Submit Review</button>
+        </div>
+      </form>
+
+      <div id="existing-reviews" class="reviews-container">
+        <h3 class="section-title" style="margin-top: 50px;">Recent Reviews</h3>
+        <!-- Reviews will be loaded here via JS -->
+      </div>
+    </div>
+  </section>
+
+  <script src="/js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const reviewForm = document.getElementById('review-form');
+      const existingReviews = document.getElementById('existing-reviews');
+      
+      // Load existing reviews
+      fetch('/api/reviews')
+        .then(response => response.json())
+        .then(reviews => {
+          let reviewsHTML = '<div class="reviews-grid">';
+          reviews.forEach(review => {
+            let stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+            reviewsHTML += `
+              <div class="review-card">
+                <div class="review-header">
+                  <div class="review-rating">${stars}</div>
+                  <div class="review-date">${review.date}</div>
+                </div>
+                <div class="review-content">${review.comment}</div>
+                <div class="review-author">
+                  <strong>${review.name}</strong>
+                  <span>${review.company}</span>
+                </div>
+                ${review.verified ? '<div class="verified-badge">Verified Review</div>' : ''}
+              </div>
+            `;
+          });
+          reviewsHTML += '</div>';
+          existingReviews.innerHTML = reviewsHTML;
+        })
+        .catch(error => console.error('Error loading reviews:', error));
+      
+      // Handle review submission
+      reviewForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const reviewData = {
+          name: document.getElementById('name').value,
+          company: document.getElementById('company').value,
+          rating: parseInt(document.getElementById('rating').value),
+          comment: document.getElementById('comment').value
+        };
+        
+        try {
+          const response = await fetch('/api/reviews', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(reviewData)
+          });
+          
+          if (response.ok) {
+            alert('Thank you for your review! It will be visible after verification.');
+            reviewForm.reset();
+            window.location.reload();
+          } else {
+            alert('Error submitting review. Please try again.');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          alert('Error submitting review. Please try again.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

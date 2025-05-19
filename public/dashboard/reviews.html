@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reviews Management - NEURIX Studios</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="/dashboard" class="logo">NEURIX<span>Studios</span></a>
+        <button id="toggleMenu" class="toggle-menu"><i class="fas fa-bars"></i></button>
+      </div>
+      
+      <ul class="menu">
+        <li class="menu-item">
+          <a href="/dashboard" class="menu-link">
+            <i class="fas fa-tachometer-alt menu-icon"></i> Dashboard
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/products" class="menu-link">
+            <i class="fas fa-box menu-icon"></i> Products
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/reviews" class="menu-link active">
+            <i class="fas fa-star menu-icon"></i> Reviews
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/staff" class="menu-link">
+            <i class="fas fa-users menu-icon"></i> Staff
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/analytics" class="menu-link">
+            <i class="fas fa-chart-bar menu-icon"></i> Analytics
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/chat" class="menu-link">
+            <i class="fas fa-comments menu-icon"></i> Live Chat
+          </a>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="main-content">
+      <div class="header">
+        <h1 class="page-title">Reviews Management</h1>
+        
+        <div class="user-menu">
+          <span class="user-name">Admin</span>
+          <button class="logout-btn">Logout</button>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">All Reviews</h2>
+        </div>
+        
+        <div class="table-responsive">
+          <table id="reviewsTable" class="table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Company</th>
+                <th>Rating</th>
+                <th>Comment</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Reviews will be loaded here via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review Edit Modal -->
+  <div id="reviewModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="formTitle" class="modal-title">Edit Review</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      
+      <form id="reviewForm">
+        <input type="hidden" id="reviewId">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="reviewName">Name</label>
+            <input type="text" id="reviewName" class="form-control" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="reviewCompany">Company</label>
+            <input type="text" id="reviewCompany" class="form-control" required>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="reviewRating">Rating</label>
+          <select id="reviewRating" class="form-control" required>
+            <option value="5">5 Stars</option>
+            <option value="4">4 Stars</option>
+            <option value="3">3 Stars</option>
+            <option value="2">2 Stars</option>
+            <option value="1">1 Star</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="reviewComment">Comment</label>
+          <textarea id="reviewComment" class="form-control" rows="4" required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label class="checkbox-container">
+            <input type="checkbox" id="reviewVerified">
+            <span class="checkbox-label">Mark as Verified</span>
+          </label>
+        </div>
+        
+        <div class="form-group">
+          <button type="submit" class="btn">Update Review</button>
+          <button type="button" class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const reviewsTable = document.getElementById('reviewsTable');
+    const reviewForm = document.getElementById('reviewForm');
+    const reviewModal = document.getElementById('reviewModal');
+    const closeModalBtn = document.querySelector('.close-modal');
+    let currentReviewId = null;
+
+    // Toggle sidebar
+    document.getElementById('toggleMenu').addEventListener('click', function() {
+      document.querySelector('.sidebar').classList.toggle('active');
+    });
+
+    // Logout
+    document.querySelector('.logout-btn').addEventListener('click', function() {
+      fetch('/api/auth/logout', {
+        method: 'POST'
+      }).then(() => {
+        window.location.href = '/login.html';
+      });
+    });
+
+    // Show modal function
+    function showModal() {
+      reviewModal.classList.add('show');
+    }
+
+    // Close modal function
+    function closeModal() {
+      reviewModal.classList.remove('show');
+    }
+
+    // Close modal when clicking the X
+    closeModalBtn.addEventListener('click', closeModal);
+
+    // Close modal when clicking outside the content
+    window.addEventListener('click', function(e) {
+      if (e.target === reviewModal) {
+        closeModal();
+      }
+    });
+    
+    // Load reviews
+    async function loadReviews() {
+      try {
+        const response = await fetch('/api/reviews');
+        const reviews = await response.json();
+        
+        const tbody = reviewsTable.querySelector('tbody');
+        tbody.innerHTML = '';
+        
+        if (reviews.length === 0) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = '<td colspan="7" style="text-align: center;">No reviews yet</td>';
+          tbody.appendChild(tr);
+          return;
+        }
+        
+        reviews.forEach(review => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${review.date}</td>
+            <td>${review.name}</td>
+            <td>${review.company}</td>
+            <td>${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</td>
+            <td>${review.comment.substring(0, 50)}${review.comment.length > 50 ? '...' : ''}</td>
+            <td>${review.verified ? '<span class="badge badge-success">Verified</span>' : '<span class="badge badge-warning">Pending</span>'}</td>
+            <td class="actions">
+              <button class="btn btn-sm" onclick="editReview(${review.id})">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-delete" onclick="deleteReview(${review.id})">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (error) {
+        console.error('Error loading reviews:', error);
+      }
+    }
+    
+    // Edit review
+    async function editReview(id) {
+      try {
+        const response = await fetch('/api/reviews');
+        const reviews = await response.json();
+        const review = reviews.find(r => r.id === id);
+        
+        if (review) {
+          currentReviewId = review.id;
+          document.getElementById('reviewId').value = review.id;
+          document.getElementById('reviewName').value = review.name;
+          document.getElementById('reviewCompany').value = review.company;
+          document.getElementById('reviewRating').value = review.rating;
+          document.getElementById('reviewComment').value = review.comment;
+          document.getElementById('reviewVerified').checked = review.verified;
+          
+          showModal();
+        }
+      } catch (error) {
+        console.error('Error loading review:', error);
+      }
+    }
+    
+    // Delete review
+    async function deleteReview(id) {
+      if (!confirm('Are you sure you want to delete this review?')) return;
+      
+      try {
+        const token = getCookie('token');
+        const response = await fetch(`/api/reviews/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          loadReviews();
+        }
+      } catch (error) {
+        console.error('Error deleting review:', error);
+      }
+    }
+    
+    // Handle form submission
+    reviewForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      if (!currentReviewId) return;
+      
+      const reviewData = {
+        name: document.getElementById('reviewName').value,
+        company: document.getElementById('reviewCompany').value,
+        rating: parseInt(document.getElementById('reviewRating').value),
+        comment: document.getElementById('reviewComment').value,
+        verified: document.getElementById('reviewVerified').checked
+      };
+      
+      try {
+        const token = getCookie('token');
+        const response = await fetch(`/api/reviews/${currentReviewId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(reviewData)
+        });
+        
+        if (response.ok) {
+          closeModal();
+          loadReviews();
+        }
+      } catch (error) {
+        console.error('Error updating review:', error);
+      }
+    });
+    
+    // Helper function to get cookie value
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+    
+    // Initialize
+    loadReviews();
+  </script>
+</body>
+</html>

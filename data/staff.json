@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "displayName": "Administrator",
+    "role": "owner",
+    "dateAdded": "2025-05-19T00:00:00.000Z",
+    "password": "$2a$10$pnbkpEcJLtCikIfl9sSub.PulyCdhb4A2L6frAjaJNLpjeFvtvE6u"
+  }
+]

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEURIX Studios - Web Design & Development</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="images/Logo icon2.svg">
+</head>
+<body>
+  <!-- Custom cursor -->
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="/" class="logo">NEURIX<span>Studios</span></a>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#why-us">Why Us</a></li>
+      <li><a href="#order">Order</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="/login.html">Login</a></li>
+    </ul>
+    <div class="menu-btn">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+  </nav>
+
+  <!-- Hero section -->
+  <section id="home" class="hero">
+    <div class="lines"></div>
+    <div class="hero-content">
+      <h1>Bringing Your <span>Digital Vision</span> To Life</h1>
+      <p>We design and develop stunning websites that engage users and achieve your business goals. Let's transform your brand's online presence together.</p>
+      <a href="#services" class="btn">Explore Services</a>
+    </div>
+  </section>
+
+  <!-- Services section -->
+  <section id="services" class="section section-dark">
+    <div class="container">
+      <h2 class="section-title">Our Services</h2>
+      <p class="section-subtitle">We offer comprehensive web solutions tailored to your business needs. From design to deployment, we handle everything.</p>
+      
+      <div class="services">
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-paint-brush"></i>
+          </div>
+          <h3 class="service-title">Web Design</h3>
+          <p class="service-description">Beautiful, responsive websites designed to impress your visitors and represent your brand perfectly.</p>
+        </div>
+        
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-code"></i>
+          </div>
+          <h3 class="service-title">Web Development</h3>
+          <p class="service-description">Custom development solutions that bring your website design to life with clean, efficient code.</p>
+        </div>
+        
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+          <h3 class="service-title">E-commerce</h3>
+          <p class="service-description">Full-featured online stores with secure payment gateways and inventory management.</p>
+        </div>
+        
+        <div class="service-card">
+          <div class="service-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h3 class="service-title">Digital Marketing</h3>
+          <p class="service-description">Strategies to increase your online visibility and drive more traffic to your website.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products section -->
+  <section id="products" class="section section-light">
+    <div class="container">
+      <h2 class="section-title">Our Products</h2>
+      <p class="section-subtitle">Browse our range of web solutions designed to meet different business needs and budgets.</p>
+      
+      <div id="products-container" class="products">
+        <!-- Products will be loaded here via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Why us section -->
+  <section id="why-us" class="section section-dark">
+    <div class="container">
+      <h2 class="section-title">Why Choose Us</h2>
+      <p class="section-subtitle">We're not just another web design agency. Here's what sets us apart from the competition.</p>
+      
+      <div class="why-us-grid">
+        <div class="why-us-item">
+          <div class="why-us-icon">
+            <i class="fas fa-award"></i>
+          </div>
+          <h3 class="why-us-title">Quality</h3>
+          <p>We never compromise on quality. Every website we build is crafted with precision and attention to detail.</p>
+        </div>
+        
+        <div class="why-us-item">
+          <div class="why-us-icon">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <h3 class="why-us-title">Speed</h3>
+          <p>Our websites are optimized for maximum performance, ensuring fast loading times and smooth user experience.</p>
+        </div>
+        
+        <div class="why-us-item">
+          <div class="why-us-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <h3 class="why-us-title">Support</h3>
+          <p>Our dedicated support team is always ready to assist you with any questions or issues you might have.</p>
+        </div>
+        
+        <div class="why-us-item">
+          <div class="why-us-icon">
+            <i class="fas fa-mobile-alt"></i>
+          </div>
+          <h3 class="why-us-title">Responsive</h3>
+          <p>All our websites are fully responsive, providing a seamless experience across all devices and screen sizes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Order section -->
+  <section id="order" class="section section-light">
+    <div class="container">
+      <h2 class="section-title">Order a Service</h2>
+      <p class="section-subtitle">Ready to take your online presence to the next level? Fill out the form below and we'll get back to you shortly.</p>
+      
+      <form id="order-form" class="order-form" enctype="multipart/form-data">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Your Name</label>
+            <input type="text" id="name" class="form-control" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" class="form-control" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" class="form-control">
+          </div>
+          
+          <div class="form-group">
+            <label for="service">Service Needed</label>
+            <select id="service" class="form-control" required>
+              <option value="">Select a service</option>
+              <option value="web-design">Web Design</option>
+              <option value="web-development">Web Development</option>
+              <option value="e-commerce">E-commerce</option>
+              <option value="digital-marketing">Digital Marketing</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="budget">Project Budget ($)</label>
+            <input type="number" id="budget" class="form-control" min="0" step="100" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="attachment">Project Files (Images or .zip, max 20MB)</label>
+            <input type="file" id="attachment" name="attachment" class="form-control" accept=".jpg,.jpeg,.png,.gif,.zip" max-size="20971520">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="message">Project Details</label>
+          <textarea id="message" class="form-control" rows="5" required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <button type="submit" class="btn btn-block">Submit Request</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Reviews section -->
+  <section id="reviews" class="section section-dark">
+    <div class="container">
+      <h2 class="section-title">Client Reviews</h2>
+      <p class="section-subtitle">Don't just take our word for it. Here's what our clients have to say about working with us.</p>
+      
+      <div class="reviews-slider">
+        <div id="reviews-container" class="reviews">
+          <!-- Reviews will be loaded here via JS -->
+        </div>
+        
+        <div class="slider-nav">
+          <!-- Slider dots will be added via JS -->
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 30px;">
+        <a href="/reviews.html" class="btn">Write a Review</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div>
+          <a href="#" class="footer-logo">NEURIX<span>Studios</span></a>
+          <p class="footer-text">We create stunning websites that help businesses grow and succeed in the digital world.</p>
+          <div class="footer-social">
+            <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="footer-title">Services</h3>
+          <ul class="footer-links">
+            <li><a href="#services">Web Design</a></li>
+            <li><a href="#services">Web Development</a></li>
+            <li><a href="#services">E-commerce</a></li>
+            <li><a href="#services">Digital Marketing</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="footer-title">Quick Links</h3>
+          <ul class="footer-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#products">Products</a></li>
+            <li><a href="#why-us">About Us</a></li>
+            <li><a href="#order">Contact</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="footer-title">Contact Us</h3>
+          <div class="contact-info">
+            <i class="fas fa-map-marker-alt contact-icon"></i>
+            <div>123 Digital Avenue, Tech City</div>
+          </div>
+          <div class="contact-info">
+            <i class="fas fa-phone contact-icon"></i>
+            <div>+1 (555) 123-4567</div>
+          </div>
+          <div class="contact-info">
+            <i class="fas fa-envelope contact-icon"></i>
+            <div>info@neurixstudios.com</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="copyright">
+        &copy; 2025 NEURIX Studios. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Chat widget -->
+  <div class="chat-widget">
+    <div class="chat-button">
+      <i class="fas fa-comment chat-icon"></i>
+    </div>
+    
+    <div class="chat-box">
+      <div class="chat-header">
+        <div class="chat-title">NEURIX Support</div>
+        <button class="close-chat">&times;</button>
+      </div>
+      
+      <div class="chat-messages">
+        <div class="message bot">
+          <div class="sender-name">Chatbot</div>
+          <div class="message-content">Hi there! How can I help you today?</div>
+        </div>
+      </div>
+      
+      <button class="staff-button">Talk to a Staff Member</button>
+      
+      <form class="chat-form">
+        <input type="text" class="chat-input" placeholder="Type your message...">
+        <button type="submit" class="send-button"><i class="fas fa-paper-plane"></i></button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Socket.io -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/socket.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Basic Website",
+    "description": "A simple yet elegant website for small businesses",
+    "price": 799,
+    "features": ["Responsive Design", "5 Pages", "Contact Form", "Basic SEO"]
+  },
+  {
+    "id": 2,
+    "name": "E-commerce Solution",
+    "description": "Complete online store setup with payment integration",
+    "price": 2499,
+    "features": ["Product Management", "Shopping Cart", "Payment Gateway", "Order Tracking"]
+  },
+  {
+    "id": 3,
+    "name": "Corporate Portal",
+    "description": "Advanced web solution for medium to large businesses",
+    "price": 3999,
+    "features": ["Custom CMS", "User Management", "Advanced Analytics", "Multi-language Support"]
+  }
+]

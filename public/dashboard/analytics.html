@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics - NEURIX Studios</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="dashboard">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="/dashboard" class="logo">NEURIX<span>Studios</span></a>
+        <button id="toggleMenu" class="toggle-menu"><i class="fas fa-bars"></i></button>
+      </div>
+      
+      <ul class="menu">
+        <li class="menu-item">
+          <a href="/dashboard" class="menu-link">
+            <i class="fas fa-tachometer-alt menu-icon"></i> Dashboard
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/products" class="menu-link">
+            <i class="fas fa-box menu-icon"></i> Products
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/reviews" class="menu-link">
+            <i class="fas fa-star menu-icon"></i> Reviews
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/staff" class="menu-link">
+            <i class="fas fa-users menu-icon"></i> Staff
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/analytics" class="menu-link active">
+            <i class="fas fa-chart-bar menu-icon"></i> Analytics
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/chat" class="menu-link">
+            <i class="fas fa-comments menu-icon"></i> Live Chat
+          </a>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="main-content" id="analyticsContainer">
+      <div class="header">
+        <h1 class="page-title">Analytics</h1>
+        
+        <div class="user-menu">
+          <span class="user-name">Admin</span>
+          <button class="logout-btn">Logout</button>
+        </div>
+      </div>
+      
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-title">Today's Visitors</div>
+          <div id="visitorToday" class="stat-value">0</div>
+          <div id="visitorTodayTrend" class="stat-trend"></div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-title">This Week</div>
+          <div id="visitorWeek" class="stat-value">0</div>
+          <div id="visitorWeekTrend" class="stat-trend"></div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-title">This Month</div>
+          <div id="visitorMonth" class="stat-value">0</div>
+          <div id="visitorMonthTrend" class="stat-trend"></div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-title">Bounce Rate</div>
+          <div id="bounceRate" class="stat-value">0%</div>
+          <div id="bounceRateTrend" class="stat-trend"></div>
+        </div>
+      </div>
+      
+      <div class="analytics-grid">
+        <div class="chart-container">
+          <h3 class="chart-title">Visitor Overview</h3>
+          <canvas id="visitorChart" width="400" height="300"></canvas>
+        </div>
+        
+        <div class="chart-container">
+          <h3 class="chart-title">Conversion Rate</h3>
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 250px;">
+            <div style="position: relative; width: 150px; height: 150px;">
+              <canvas id="conversionChart"></canvas>
+              <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                <div id="conversionRate" style="font-size: 2rem; font-weight: 700; color: var(--accent);">0%</div>
+              </div>
+            </div>
+            <p style="margin-top: 20px; opacity: 0.7;">Conversion rate</p>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <h3 class="chart-title">Top Pages</h3>
+          <div id="topPagesContainer" style="padding: 20px;">
+            <!-- Top pages will be loaded here -->
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <h3 class="chart-title">Traffic Sources</h3>
+          <canvas id="trafficSourcesChart" width="400" height="250"></canvas>
+        </div>
+      </div>
+      
+      <div class="card" style="margin-top: 30px;">
+        <div class="card-header">
+          <h2 class="card-title">Device Breakdown</h2>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; padding: 20px;">
+          <div>
+            <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Device Type</h3>
+            <canvas id="deviceTypeChart" width="400" height="250"></canvas>
+          </div>
+          
+          <div>
+            <h3 style="margin-bottom: 15px; font-size: 1.1rem;">Browser Usage</h3>
+            <canvas id="browserChart" width="400" height="250"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const visitorTodayElement = document.getElementById('visitorToday');
+    const visitorWeekElement = document.getElementById('visitorWeek');
+    const visitorMonthElement = document.getElementById('visitorMonth');
+    const conversionRateElement = document.getElementById('conversionRate');
+    const topPagesContainer = document.getElementById('topPagesContainer');
+
+    // Toggle sidebar
+    document.getElementById('toggleMenu').addEventListener('click', function() {
+      document.querySelector('.sidebar').classList.toggle('active');
+    });
+
+    // Logout
+    document.querySelector('.logout-btn').addEventListener('click', function() {
+      fetch('/api/auth/logout', {
+        method: 'POST'
+      }).then(() => {
+        window.location.href = '/login.html';
+      });
+    });
+
+    // Helper function to get cookie value
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    // Load analytics data
+    async function loadAnalytics() {
+      try {
+        const token = getCookie('token');
+        const response = await fetch('/api/analytics', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.status === 401) {
+          window.location.href = '/login.html';
+          return;
+        }
+        
+        const analyticsData = await response.json();
+        
+        // Update stat cards
+        visitorTodayElement.textContent = analyticsData.visitors.today.toLocaleString();
+        visitorWeekElement.textContent = analyticsData.visitors.thisWeek.toLocaleString();
+        visitorMonthElement.textContent = analyticsData.visitors.thisMonth.toLocaleString();
+        
+        // Calculate conversion rate (mock data)
+        const conversionRate = (analyticsData.visitors.today > 0) 
+          ? ((Math.random() * 5) + 2).toFixed(1) 
+          : '0.0';
+        conversionRateElement.textContent = `${conversionRate}%`;
+        
+        // Top pages
+        if (analyticsData.topPages && analyticsData.topPages.length > 0) {
+          topPagesContainer.innerHTML = '';
+          
+          // Calculate total views for percentage
+          const totalPageViews = analyticsData.topPages.reduce((sum, page) => sum + page.views, 0);
+          
+          analyticsData.topPages.forEach(page => {
+            const percentage = totalPageViews > 0 ? ((page.views / totalPageViews) * 100).toFixed(1) : 0;
+            
+            const pageDiv = document.createElement('div');
+            pageDiv.innerHTML = `
+              <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span>${page.page}</span>
+                <span>${percentage}%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${percentage}%"></div>
+              </div>
+            `;
+            
+            topPagesContainer.appendChild(pageDiv);
+          });
+        } else {
+          topPagesContainer.innerHTML = '<div style="text-align: center; padding: 30px;">No page view data available</div>';
+        }
+        
+        // Create visitor chart (last 7 days)
+        createVisitorChart();
+        
+        // Create conversion chart
+        createConversionChart(parseFloat(conversionRate));
+        
+        // Create traffic sources chart
+        createTrafficSourcesChart();
+        
+        // Create device and browser charts
+        createDeviceTypeChart();
+        createBrowserChart();
+      } catch (error) {
+        console.error('Error loading analytics:', error);
+      }
+    }
+
+    // Create visitor chart
+    function createVisitorChart() {
+      const ctx = document.getElementById('visitorChart').getContext('2d');
+      
+      // Generate mock data for the last 7 days
+      const labels = [];
+      const data = [];
+      
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        
+        const day = date.toLocaleDateString('en-US', { weekday: 'short' });
+        labels.push(day);
+        
+        // Generate random visitor count between 500-3000
+        const visitorCount = Math.floor(Math.random() * 2500) + 500;
+        data.push(visitorCount);
+      }
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Daily Visitors',
+            data: data,
+            borderColor: '#64ffda',
+            backgroundColor: 'rgba(100, 255, 218, 0.1)',
+            tension: 0.3,
+            fill: true,
+            pointBackgroundColor: '#64ffda',
+            pointBorderColor: '#0a192f',
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              },
+              ticks: {
+                color: 'rgba(255, 255, 255, 0.7)'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                color: 'rgba(255, 255, 255, 0.7)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Create conversion chart
+    function createConversionChart(conversionRate) {
+      const ctx = document.getElementById('conversionChart').getContext('2d');
+      
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Converted', 'Not Converted'],
+          datasets: [{
+            data: [conversionRate, 100 - conversionRate],
+            backgroundColor: ['#64ffda', 'rgba(100, 255, 218, 0.1)'],
+            borderWidth: 0,
+            cutout: '75%'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              enabled: false
+            }
+          }
+        }
+      });
+    }
+
+    // Create traffic sources chart
+    function createTrafficSourcesChart() {
+      const ctx = document.getElementById('trafficSourcesChart').getContext('2d');
+      
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Direct', 'Search', 'Social', 'Referral'],
+          datasets: [{
+            data: [35, 42, 18, 5],
+            backgroundColor: [
+              '#64ffda',
+              '#FF00FF',
+              '#00BFFF',
+              '#FFA500'
+            ],
+            borderWidth: 2,
+            borderColor: '#0a192f'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'right',
+              labels: {
+                color: 'rgba(255, 255, 255, 0.7)',
+                padding: 15,
+                font: {
+                  size: 12
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Create device type chart
+    function createDeviceTypeChart() {
+      const ctx = document.getElementById('deviceTypeChart').getContext('2d');
+      
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Mobile', 'Desktop', 'Tablet'],
+          datasets: [{
+            label: 'Visitors',
+            data: [52, 40, 8],
+            backgroundColor: '#64ffda',
+            borderRadius: 5
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              },
+              ticks: {
+                color: 'rgba(255, 255, 255, 0.7)'
+              }
+            },
+            y: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                color: 'rgba(255, 255, 255, 0.7)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Create browser chart
+    function createBrowserChart() {
+      const ctx = document.getElementById('browserChart').getContext('2d');
+      
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Chrome', 'Safari', 'Firefox', 'Edge', 'Other'],
+          datasets: [{
+            label: 'Users',
+            data: [65, 20, 8, 5, 2],
+            backgroundColor: [
+              '#64ffda',
+              '#FF00FF',
+              '#00BFFF',
+              '#FFA500',
+              '#9370DB'
+            ],
+            borderRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              },
+              ticks: {
+                color: 'rgba(255, 255, 255, 0.7)'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                color: 'rgba(255, 255, 255, 0.7)'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Initialize
+    loadAnalytics();
+  </script>
+</body>
+</html>

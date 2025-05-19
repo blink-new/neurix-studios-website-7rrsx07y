@@ -1,0 +1,21 @@
+{
+  "visitors": [
+    {
+      "date": "2025-05-19",
+      "count": 2693
+    }
+  ],
+  "pageViews": [
+    {
+      "date": "2025-05-19",
+      "page": "/products",
+      "count": 1347
+    },
+    {
+      "date": "2025-05-19",
+      "page": "/reviews",
+      "count": 1346
+    }
+  ],
+  "conversions": []
+}

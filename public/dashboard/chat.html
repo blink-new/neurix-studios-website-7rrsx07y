@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Chat - NEURIX Studios</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="dashboard">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="/dashboard" class="logo">NEURIX<span>Studios</span></a>
+        <button id="toggleMenu" class="toggle-menu"><i class="fas fa-bars"></i></button>
+      </div>
+      
+      <ul class="menu">
+        <li class="menu-item">
+          <a href="/dashboard" class="menu-link">
+            <i class="fas fa-tachometer-alt menu-icon"></i> Dashboard
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/products" class="menu-link">
+            <i class="fas fa-box menu-icon"></i> Products
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/analytics" class="menu-link">
+            <i class="fas fa-chart-bar menu-icon"></i> Analytics
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="/dashboard/chat" class="menu-link active">
+            <i class="fas fa-comments menu-icon"></i> Live Chat
+          </a>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="main-content">
+      <div class="header">
+        <h1 class="page-title">Live Chat</h1>
+        
+        <div class="user-menu">
+          <span class="user-name">Admin</span>
+          <button class="logout-btn">Logout</button>
+        </div>
+      </div>
+      
+      <div class="chat-container">
+        <div id="chatUsers" class="chat-sidebar">
+          <!-- Chat users will be loaded here via JS -->
+        </div>
+        
+        <div class="chat-content">
+          <div class="chat-header">
+            <h3 id="currentChatUser">Select a conversation</h3>
+          </div>
+          
+          <div id="chatMessages" class="chat-messages">
+            <!-- Chat messages will be loaded here via JS -->
+          </div>
+          
+          <div class="chat-input-area">
+            <form id="chatForm">
+              <input type="text" id="messageInput" class="chat-input" placeholder="Type your message...">
+              <button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/socket.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
